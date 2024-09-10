@@ -14,15 +14,19 @@ from kivy.uix.widget import Widget
 import socket
 import pickle
 
-class ConfirmationDialog(MDDialog):
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
+class Connector:
+    host = '192.168.43.196'  # as both code is running on same pc
+    port = 9090  # socket server port number
+
+    socket = None
+
+    def connection():    
+        Connector.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # instantiate
+        Connector.socket.connect((Connector.host, Connector.port))  # connect to the server
 
     def client_program(r):
-        ConfirmationDialog.client_socket.send(r.encode())  # send message
-        data = ConfirmationDialog.client_socket.recv(4096) # receive response
+        Connector.socket.send(r.encode())  # send message
+        data = Connector.socket.recv(4096) # receive response
         data_arr = pickle.loads(data) # decode recive string to a array
 
         ConfirmationDialog.show_confirmation(data_arr)
@@ -31,18 +35,19 @@ class ConfirmationDialog(MDDialog):
         status_str = pickle.dumps(status)
 
         if status == True:
-            ConfirmationDialog.client_socket.send(status_str)
+            Connector.socket.send(status_str)   
 
+class ConfirmationDialog(MDDialog, Connector):
     def show_confirmation(data_arr):
         def close_dialog(obj):
             dialog.dismiss()
             status = False
-            ConfirmationDialog.validation(status)
+            Connector.validation(status)
 
         def validate(obj):
             dialog.dismiss()
             status = True
-            ConfirmationDialog.validation(status)
+            Connector.validation(status)
 
         dialog = MDDialog(
             # ----------------------------Icon-----------------------------

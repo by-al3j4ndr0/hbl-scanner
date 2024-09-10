@@ -9,13 +9,14 @@ from PIL import Image
 from gestures4kivy import CommonGestures
 from camera4kivy import Preview
 
-from confirmation_dialog import ConfirmationDialog
+from confirmation_dialog import Connector
 
 class QRReader(Preview, CommonGestures):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.annotations = []
+        Connector.connection()
 
     ####################################
     # Analyze a Frame - NOT on UI Thread
@@ -77,4 +78,4 @@ class QRReader(Preview, CommonGestures):
         for r in self.annotations:
             if x >= r['x'] and x <= r['x'] + r['w'] and\
                y >= r['y'] and y <= r['y'] + r['h']:
-                ConfirmationDialog.client_program(r['t'])
+                Connector.client_program(r['t'])

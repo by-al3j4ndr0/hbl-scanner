@@ -42,13 +42,11 @@ Builder.load_string("""
     qr_reader: self.ids.preview
     QRReader:
         aspect_ratio: '4:3'
-        size_hint: 0.8, 0.8
         pos_hint: {"center_x": .5, "center_y": .5}
         id:preview
                     
     MDTopAppBar:
         type: "small"
-        size_hint_x: 0.8
         pos_hint: {"center_x": .5, "center_y": .95}
                     
         MDTopAppBarTitle:
@@ -56,7 +54,6 @@ Builder.load_string("""
 
     MDBottomAppBar:
         md_bg_color: app.theme_cls.surfaceColor
-        size_hint_x: 0.8
         size_hint_y: 0.1
         pos_hint: {"center_x": .5, "center_y": 0.05}
                     
