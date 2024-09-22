@@ -11,43 +11,37 @@ from kivymd.uix.divider import MDDivider
 
 from kivy.uix.widget import Widget
 
-import socket
-import pickle
+import requests
 
-class Connector:
-    host = '192.168.43.196'  # as both code is running on same pc
-    port = 9090  # socket server port number
+class APIRequest():
+    def query(r):
+        hbl_splitted = str.split(r, "/")
+        hbl = hbl_splitted[0]
+        params = {'hbl': hbl}
+        url = 'http://127.0.0.1:8000/v1/query'
 
-    socket = None
+        response = requests.get(url=url, params=params)
 
-    def connection():    
-        Connector.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # instantiate
-        Connector.socket.connect((Connector.host, Connector.port))  # connect to the server
+        API_DATA = response.json()
 
-    def client_program(r):
-        Connector.socket.send(r.encode())  # send message
-        data = Connector.socket.recv(4096) # receive response
-        data_arr = pickle.loads(data) # decode recive string to a array
+        hbl = str(API_DATA['hbl']).replace("['", "").replace("']", "")
+        name = str(API_DATA['name']).replace("['", "").replace("']", "")
+        city = str(API_DATA['city']).replace("['", "").replace("']", "")
+        state = str(API_DATA['state']).replace("['", "").replace("']", "")
 
-        ConfirmationDialog.show_confirmation(data_arr)
+        ConfirmationDialog.show_confirmation(hbl, name, city, state)
 
-    def validation(status):
-        status_str = pickle.dumps(status)
-
-        if status == True:
-            Connector.socket.send(status_str)   
-
-class ConfirmationDialog(MDDialog, Connector):
-    def show_confirmation(data_arr):
+class ConfirmationDialog(MDDialog):
+    def show_confirmation(hbl, name, city, state):
         def close_dialog(obj):
             dialog.dismiss()
-            status = False
-            Connector.validation(status)
 
         def validate(obj):
             dialog.dismiss()
-            status = True
-            Connector.validation(status)
+            params = {'hbl': hbl}
+            url = 'http://127.0.0.1:8000/v1/confirm'
+
+            response = requests.get(url=url, params=params)
 
         dialog = MDDialog(
             # ----------------------------Icon-----------------------------
@@ -66,16 +60,16 @@ class ConfirmationDialog(MDDialog, Connector):
             MDDialogContentContainer(
                 MDDivider(),
                     MDDialogSupportingText(
-                        text = "Nombre y Apellidos: " + data_arr[0],
+                        text = "Nombre y Apellidos: " + name,
                     ),
                     MDDialogSupportingText(
-                        text = "Municipio: " + data_arr[1],
+                        text = "Municipio: " + city,
                     ),
                     MDDialogSupportingText(
-                        text = "Provincia: " + data_arr[2],
+                        text = "Provincia: " + state,
                     ),
                     MDDialogSupportingText(
-                        text = "HBL: " + data_arr[3],
+                        text = "HBL: " + hbl,
                     ),
                 MDDivider(),
                 orientation = "vertical",
