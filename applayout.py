@@ -29,14 +29,6 @@ class ButtonsLayout(RelativeLayout):
             self.ids.torch.pos_hint  = {'center_x':.5,'center_y':.5}
             self.ids.torch.size_hint = (None, .2)
 
-    def enable_torch(self, state):
-        if platform == 'android':
-            if state == 'down':
-                torch = 'on'
-            else:
-                torch = 'off'
-            self.parent.qr_reader.torch(torch)
-
 Builder.load_string("""
 <AppLayout>:        
     qr_reader: self.ids.preview

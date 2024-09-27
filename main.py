@@ -6,7 +6,6 @@ from kivy.clock import Clock
 from applayout import AppLayout
 from android_permissions import AndroidPermissions
 
-
 if platform == 'android':
     from jnius import autoclass
     from android.runnable import run_on_ui_thread
