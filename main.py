@@ -5,6 +5,7 @@ from kivy.utils import platform
 from kivy.clock import Clock
 from applayout import AppLayout
 from android_permissions import AndroidPermissions
+from confirmation_dialog import HBLWritter
 
 if platform == 'android':
     from jnius import autoclass
@@ -52,6 +53,9 @@ class MyApp(MDApp):
 
     def on_stop(self):
         self.layout.qr_reader.disconnect_camera()
+
+    def open_input(self):
+        HBLWritter().show_dialog()
 
 MyApp().run()
 

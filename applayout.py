@@ -51,6 +51,7 @@ Builder.load_string("""
                     
     MDButton:
         pos_hint: {"center_x": .8, "center_y": .05}
+        on_release: app.open_input()
 
         MDButtonIcon:
             icon: "keyboard"

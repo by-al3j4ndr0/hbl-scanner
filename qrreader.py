@@ -77,4 +77,4 @@ class QRReader(Preview, CommonGestures):
         for r in self.annotations:
             if x >= r['x'] and x <= r['x'] + r['w'] and\
                y >= r['y'] and y <= r['y'] + r['h']:
-                APIRequest.query(r['t'])
+                APIRequest.query(self, r['t'])

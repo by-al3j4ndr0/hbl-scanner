@@ -11,7 +11,6 @@ from kivymd.uix.textfield import (
     MDTextField, 
     MDTextFieldHintText, 
     MDTextFieldMaxLengthText,
-    MDTextFieldTrailingIcon,
 )
 from kivymd.uix.divider import MDDivider
 
@@ -20,7 +19,7 @@ from kivy.uix.widget import Widget
 import requests
 
 class APIRequest():
-    def query(r):
+    def query(self, r):
         hbl_splitted = str.split(r, "/")
         hbl = hbl_splitted[0]
         params = {'hbl': hbl}
@@ -43,12 +42,12 @@ class ConfirmationDialog(MDDialog):
             dialog.dismiss()
 
         def validate(obj):
-            dialog.dismiss()
             params = {'hbl': hbl}
             url = 'https://alejandroperezhdez.pythonanywhere.com/v1/confirm'
-
             response = requests.get(url=url, params=params)
-
+            if response.status_code == 200:
+                dialog.dismiss()
+            
         dialog = MDDialog(
             # ----------------------------Icon-----------------------------
             MDDialogIcon(
@@ -99,61 +98,53 @@ class ConfirmationDialog(MDDialog):
         )
         dialog.open()
 
-# class HBLWritter(MDDialog):
-#     def hbl_writter():
-#         def close_dialog(obj):
-#             hbl_dialog.dismiss()
+class HBLWritter(MDDialog):
+    def show_dialog(self):
+        def close(self):
+            hbl_dialog.dismiss()
+        
+        def send_hbl(self):
+            hbl = hbl_input._get_text()
+            APIRequest().query(hbl)
+            hbl_dialog.dismiss()
+    
+        dialog_icon = MDDialogIcon(icon = "keyboard")
+        dialog_headline_text = MDDialogHeadlineText(text = "HBL Input")
+        
+        content_container = MDDialogContentContainer(orientation = "vertical")
 
-#         def validate(obj):
-            
+        hbl_input = MDTextField(
+                        MDTextFieldHintText(
+                            text = "HBL"
+                        ),
+                        MDTextFieldMaxLengthText(
+                            max_text_length = 11
+                        ),
+                        mode = "outlined",
+                        required = True,
+                        text = "GDT",
+                        input_type = "number"
+                    )
+        
+        button_container = MDDialogButtonContainer(
+                    MDButton(
+                        MDButtonText(text = "Cancel"),
+                        style="text",
+                        on_release=close
+                    ),
+                    MDButton(
+                        MDButtonText(text = "Send"),
+                        style="text",
+                        on_release=send_hbl
+                    ),
+                    spacing="8dp",
+                )
+        
+        content_container.add_widget(hbl_input)
 
-#         hbl_dialog = MDDialog(
-#              # ----------------------------Icon-----------------------------
-#             MDDialogIcon(
-#                 icon = "keyboard",
-#             ),
-#             # -----------------------Headline text-------------------------
-#             MDDialogHeadlineText(
-#                 text = "HBL Loader",
-#             ),
-#             MDDialogSupportingText(
-#                 text = "Introdzca manualmente el HBL",
-#             ),
-#             # -----------------------Custom content------------------------
-#             MDDialogContentContainer(
-#                 MDDivider(),
-#                     MDTextField(
-#                         MDTextFieldTrailingIcon(
-#                             icon = "keyboard"
-#                         ),
-#                         MDTextFieldHintText(
-#                             text = "HBL"
-#                         ),
-#                         MDTextFieldMaxLengthText(
-#                             max_text_length = 11
-#                         ),
-#                         mode = "outlined",
-#                         required = True,
-#                         id = "hbl_input"
-#                     ),
-#                 MDDivider(),
-#                 orientation = "vertical",
-#             ),
-#             # ---------------------Button container------------------------
-#             MDDialogButtonContainer(
-#                 Widget(),
-#                 MDButton(
-#                     MDButtonText(text = "Cancel"),
-#                     style="text",
-#                     on_release = close_dialog
-#                 ),
-#                 MDButton(
-#                     MDButtonText(text = "Send"),
-#                     style="text",
-#                     on_release = validate
-#                 ),
-#                 spacing="8dp",
-#             ),
-#             # -------------------------------------------------------------
-#         )
-#         hbl_dialog.open()
+        hbl_dialog = MDDialog()
+        hbl_dialog.add_widget(dialog_icon)
+        hbl_dialog.add_widget(dialog_headline_text)
+        hbl_dialog.add_widget(content_container)
+        hbl_dialog.add_widget(button_container)
+        hbl_dialog.open()
